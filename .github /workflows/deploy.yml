@@ -29,3 +29,4 @@ jobs:
               cd laba443
             fi
             echo 'Deployment successful to digital ocean d1' 
+          
