@@ -10,19 +10,32 @@ jobs:
       - name: Deploy NodeJS app
         uses: appleboy/ssh-action@v0.1.2
         with:
-          host: ${{secrets.SSH_HOST}} # IP address of the server you wish to ssh into
-          key: ${{secrets.SSH_KEY}} # Private or public key of the server
-          username: ${{ secrets.SSH_USERNAME }} # User of the server you want to ssh into
+          host: ${{ secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_KEY }}
+          username: ${{ secrets.SSH_USERNAME }}
           passphrase: ${{ secrets.SERVER_PASSPHRASE }}
-     
           script: |
+            # Створюємо директорію, якщо її немає
+            mkdir -p ~/vadumr
             cd ~/vadumr
-            sudo apt update && sudo apt upgrade -y
-            sudo apt install python3 python3-pip -y
-            pip3 install numpy tensorflow matplotlib jupyter
+            
+            # Оновлення пакетів із неінтерактивним режимом
+            sudo DEBIAN_FRONTEND=noninteractive apt update && sudo apt upgrade -y
+            sudo DEBIAN_FRONTEND=noninteractive apt install python3 python3-pip -y
+            
+            # Встановлення пакетів по одному для уникнення перевантаження пам’яті
+            pip3 install numpy
+            pip3 install tensorflow
+            pip3 install matplotlib
+            pip3 install jupyter
+            
+            # Налаштування фаєрволу
             sudo ufw allow 8888
-            jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser
-            # Якщо репозиторій уже є, оновлюємо його. Якщо ні — клонуємо
+            
+            # Запуск Jupyter у фоновому режимі
+            nohup jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser &
+            
+            # Оновлення або клонування репозиторію
             if [ -d "laba443" ]; then
               cd laba443
               git pull origin main
@@ -30,5 +43,5 @@ jobs:
               git clone https://github.com/VADUMr/Laba443.git
               cd laba443
             fi
-            echo 'Deployment successful to digital ocean d1' 
-          
+            
+            echo 'Deployment successful to digital ocean d1'
