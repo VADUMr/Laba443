@@ -30,10 +30,10 @@ jobs:
             pip3 install jupyter
             
             # Налаштування фаєрволу
-            sudo ufw allow 8888
+            sudo ufw allow 9999
             
             # Запуск Jupyter у фоновому режимі
-            nohup jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser &
+            nohup jupyter notebook --ip=0.0.0.0 --port=9999 --no-browser &
             
             # Оновлення або клонування репозиторію
             if [ -d "laba443" ]; then
